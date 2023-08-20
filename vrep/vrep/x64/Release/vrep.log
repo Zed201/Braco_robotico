@@ -1,5 +1,9 @@
-﻿  extApi.c
-C:\Users\luizg\OneDrive\Documentos\Progamacao\braco_robotico\vrep\vrep\extApi.h(9,14): fatal  error C1083: Não é possível abrir arquivo incluir: 'simConst.h': No such file or directory
-  extApiPlatform.c
-  Adding library: Winmm.lib
-  Adding library: Ws2_32.lib
+﻿  vrep.cpp
+C:\Users\luizg\OneDrive\Área de Trabalho\vrep\vrep\vrep\vrep.cpp(11,21): warning C4244: 'return': conversão de 'double' para 'simxFloat', possível perda de dados
+     Criando biblioteca C:\Users\luizg\OneDrive\Área de Trabalho\vrep\vrep\x64\Release\vrep.lib e objeto C:\Users\luizg\OneDrive\Área de Trabalho\vrep\vrep\x64\Release\vrep.exp
+  Gerando código
+  1 of 246 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
+  Finalizada a geração de código
+  vrep.vcxproj -> C:\Users\luizg\OneDrive\Área de Trabalho\vrep\vrep\x64\Release\vrep.exe
