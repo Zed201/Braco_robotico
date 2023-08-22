@@ -85,36 +85,49 @@ void Moito(simxInt ClientID) {
 }
 void Mnove(simxInt ClientID) {
     MJ(ClientID, 1, -20);
-    MJ(ClientID, 5, 77);
+    MJ(ClientID, 5, 86);
     extApi_sleepMs(800);
-    MJ(ClientID, 2, -70);
+    MJ(ClientID, 2, -75);
 }
 void Mzero(simxInt ClientID) {
-    MJ(ClientID, 1, -16.5);
-    MJ(ClientID, 5, -11);
+    MJ(ClientID, 2, -30);
+    MJ(ClientID, 1, -17.5);
+    MJ(ClientID, 3, -16);
+    MJ(ClientID, 5, 100);
     extApi_sleepMs(800);
-    MJ(ClientID, 2, -48.5);
+    MJ(ClientID, 2, -63);
+    extApi_sleepMs(1200);
+    MJ(ClientID, 5, 68);
 }
 void MBranco(simxInt ClientID) {
+    MJ(ClientID, 2, -30);
     MJ(ClientID, 1, -12.5);
-    MJ(ClientID, 3, -15);
-    MJ(ClientID, 5, 11);
+    MJ(ClientID, 3, -16);
+    MJ(ClientID, 5, 100);
     extApi_sleepMs(800);
-    MJ(ClientID, 2, -47);
+    MJ(ClientID, 2, -70);
+    extApi_sleepMs(1200);
+    MJ(ClientID, 5, 84);
 }
 void MCorrige(simxInt ClientID) {
+    MJ(ClientID, 2, -30);
     MJ(ClientID, 1, -17.5);
-    MJ(ClientID, 3, -14);
-    MJ(ClientID, 5, 83);
+    MJ(ClientID, 3, -16);
+    MJ(ClientID, 5, 100);
     extApi_sleepMs(800);
-    MJ(ClientID, 2, -72);
+    MJ(ClientID, 2, -69);
+    extApi_sleepMs(1200);
+    MJ(ClientID, 5, 80);
 }
 void MConfirma(simxInt ClientID) {
-    MJ(ClientID, 1, -22);
+    MJ(ClientID, 2, -30);
+    MJ(ClientID, 1, -22.6);
     MJ(ClientID, 3, -16);
-    MJ(ClientID, 5, 43);
+    MJ(ClientID, 5, 100);
     extApi_sleepMs(800);
-    MJ(ClientID, 2, -56);
+    MJ(ClientID, 2, -64);
+    extApi_sleepMs(1200);
+    MJ(ClientID, 5, 64);
 }
 // Funcao para colocar todos os angulos em zero
 void Zerar(simxInt ClientId) {
@@ -129,9 +142,15 @@ void medio(simxInt ClienteID) {
     MJ(ClienteID, 1, -17);
     extApi_sleepMs(500);
     MJ(ClienteID, 2, -60);
+    MJ(ClienteID, 3, 0);
 }
 
 int main(int argc, char* argv[]){
+    // Simplesmente pega os votos
+        FILE* arq = NULL;
+        arq = fopen("votos.txt", "r");
+        char nome[100], votos[5][6];
+        fscanf(arq, "%99[^','], %s %s %s %s %s", nome, votos[0], votos[1], votos[2], votos[3], votos[4]);
     //conecta com o coppelia
     int clientID = simxStart((simxChar*) "127.0.0.1", 19999, true, true, 2000, 5);
     extApi_sleepMs(500);
@@ -145,86 +164,152 @@ int main(int argc, char* argv[]){
     // Sistema de debug, tem as opcoes tando de ajustar a angulacao de cada junta como chamadas de funcoes para cada tecla(ainda por terminar os utlimos)
     // As funcos Mum, Mdois... sao para direcionar para clicar nos numeros e botoes correspondentes
     // No swicth as funcoes estao com a "escolha" meio estraha, mas e para representar, como 11 e Mum, 22 e Mdois...
-    int escolha = -1;
-    float junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
-    while (scanf("%d", &escolha) != EOF){
-        switch (escolha){
-        case 1:
-            scanf("%f", &junta1);
-            MJ(clientID, 1, junta1);
-            break;
-        case 2:
-            scanf("%f", &junta2);
-            MJ(clientID, 2, junta2);
-            break;
-        case 3:
-            scanf("%f", &junta3);
-            MJ(clientID, 3, junta3);
-            break;
-        case 4:
-            scanf("%f", &junta4);
-            MJ(clientID, 4, junta4);
-            break;
-        case 5:
-            scanf("%f", &junta5);
-            MJ(clientID, 5, junta5);
-            break;
-        case 6:
-            scanf("%f", &junta1);
-            MJ(clientID, 6, junta6);
-            break;
-        case 0:
-            junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
-            Zerar(clientID);
-            break;
-        case 7:
+    Zerar(clientID);
+    extApi_sleepMs(3000);
+    printf("Eleitor %s\n", nome);
+    for (int i = 0; i < 5; i++)
+    {
+        printf("Voto a ser digitado %s\n", votos[i]);
+        medio(clientID);
+        extApi_sleepMs(2000);
+        for (int z = 0; z < strlen(votos[i]); z++) {
             medio(clientID);
-            break;
-        case 11:
-            Mum(clientID);
-            break;
-        case 22:
-            Mdois(clientID);
-            break;
-        case 33:
-            Mtres(clientID);
-            break;
-        case 44:
-            Mquatro(clientID);
-            break;
-        case 55:
-            Mcinco(clientID);
-            break;
-        case 66:
-            Mseis(clientID);
-            break;
-        case 77:
-            Msete(clientID);
-            break;
-        case 88:
-            Moito(clientID);
-            break;
-        case 99:
-            Mnove(clientID);
-            break;
-        case 100:
-            Mzero(clientID);
-            break;
-        case 101:
-            MBranco(clientID);
-            break;
-        case 102:
-            MCorrige(clientID);
-            break;
-        case 103:
-            MConfirma(clientID);
-            break;
+            
+            if (votos[i][z] == '1')
+            {
+                Mum(clientID);
+                extApi_sleepMs(2500);
+            } else if (votos[i][z] == '2')
+            {
+                Mdois(clientID);
+                extApi_sleepMs(2500);
+            } else if (votos[i][z] == '3')
+            {
+                Mtres(clientID);
+                extApi_sleepMs(2500);
+            } else if (votos[i][z] == '4')
+            {
+                Mquatro(clientID);
+                extApi_sleepMs(2500);
+            }
+            else if (votos[i][z] == '5')
+            {
+                Mcinco(clientID);
+                extApi_sleepMs(2500);
+            }
+            else if (votos[i][z] == '6')
+            {
+                Mseis(clientID);
+                extApi_sleepMs(2500);
+            } else if (votos[i][z] == '7')
+            {
+                Msete(clientID);
+                extApi_sleepMs(2500);
+            }
+            else if (votos[i][z] == '8')
+            {
+                Moito(clientID);
+                extApi_sleepMs(2500);
+            }
+            else if (votos[i][z] == '9')
+            {
+                Mnove(clientID);
+                extApi_sleepMs(2500);
+            }
+            else if (votos[i][z] == '0')
+            {
+                Mzero(clientID);
+                extApi_sleepMs(3000);
+            }
+            medio(clientID);
         }
-        // No fim ele printa as angulacos de cada junta para o debug
-        printf("1- %.1f | 2- %.1f | 3- %.1f | 4- %.1f | 5- %.1f | 6- %.1f\n\n", junta1, junta2, junta3, junta4, junta5, junta6);
-        extApi_sleepMs(200);
+        extApi_sleepMs(2000);
+        MConfirma(clientID);
+        extApi_sleepMs(3000);
     }
+    //int escolha = -1;
+    //float junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
+    //while (scanf("%d", &escolha) != EOF){
+    //    switch (escolha){
+    //    case 1:
+    //        scanf("%f", &junta1);
+    //        MJ(clientID, 1, junta1);
+    //        break;
+    //    case 2:
+    //        scanf("%f", &junta2);
+    //        MJ(clientID, 2, junta2);
+    //        break;
+    //    case 3:
+    //        scanf("%f", &junta3);
+    //        MJ(clientID, 3, junta3);
+    //        break;
+    //    case 4:
+    //        scanf("%f", &junta4);
+    //        MJ(clientID, 4, junta4);
+    //        break;
+    //    case 5:
+    //        scanf("%f", &junta5);
+    //        MJ(clientID, 5, junta5);
+    //        break;
+    //    case 6:
+    //        scanf("%f", &junta1);
+    //        MJ(clientID, 6, junta6);
+    //        break;
+    //    case 0:
+    //        junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
+    //        Zerar(clientID);
+    //        break;
+    //    case 7:
+    //        medio(clientID);
+    //        break;
+    //    case 11:
+    //        Mum(clientID);
+    //        break;
+    //    case 22:
+    //        Mdois(clientID);
+    //        break;
+    //    case 33:
+    //        Mtres(clientID);
+    //        break;
+    //    case 44:
+    //        Mquatro(clientID);
+    //        break;
+    //    case 55:
+    //        Mcinco(clientID);
+    //        break;
+    //    case 66:
+    //        Mseis(clientID);
+    //        break;
+    //    case 77:
+    //        Msete(clientID);
+    //        break;
+    //    case 88:
+    //        Moito(clientID);
+    //        break;
+    //    case 99:
+    //        Mnove(clientID);
+    //        break;
+    //    case 100:
+    //        Mzero(clientID);
+    //        break;
+    //    case 101:
+    //        MBranco(clientID);
+    //        break;
+    //    case 102:
+    //        MCorrige(clientID);
+    //        break;
+    //    case 103:
+    //        MConfirma(clientID);
+    //        break;
+    //    }
+    //   /* extApi_sleepMs(2000);
+    //    medio(clientID);*/
+    //    // No fim ele printa as angulacos de cada junta para o debug
+    //    printf("1- %.1f | 2- %.1f | 3- %.1f | 4- %.1f | 5- %.1f | 6- %.1f\n\n", junta1, junta2, junta3, junta4, junta5, junta6);
+    //    extApi_sleepMs(200);
+    //}
     // Fecha a conexao 
     simxFinish(clientID);
+    
     return(0);
 }
