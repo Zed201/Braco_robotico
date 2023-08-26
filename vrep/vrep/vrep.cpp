@@ -10,6 +10,9 @@ extern "C" {
 simxFloat Graus_Rad(float x) {
     return (x * PI) / 180;
 }
+simxInt Rad_Graus(float x) {
+    return (x * 180) / PI;
+}
 // Funcao responsavel por mover determinada juntar
 void MJ(simxInt clientID, int Junta, float graus) {
     // Handlers de cada junta(o path para cada junta); As comentadas sao as do primeiro exemplo, que tem so um robo
@@ -152,8 +155,8 @@ int main(int argc, char* argv[]){
         char nome[100], votos[5][6];
         fscanf(arq, "%99[^','], %s %s %s %s %s", nome, votos[0], votos[1], votos[2], votos[3], votos[4]);
     //conecta com o coppelia
-    int clientID = simxStart((simxChar*) "127.0.0.1", 19999, true, true, 2000, 5);
-    extApi_sleepMs(500);
+        int clientID = simxStart((simxChar*) "127.0.0.1", 19999, true, true, 2000, 5);
+        extApi_sleepMs(500);
     //verifica conexao com simulador
     if (clientID == -1) {
         printf("Erro conectando ao Coppelia!\n");
@@ -161,20 +164,42 @@ int main(int argc, char* argv[]){
     } else {
         printf("Conectado ao Coppelia!\n");
     }
-    // Sistema de debug, tem as opcoes tando de ajustar a angulacao de cada junta como chamadas de funcoes para cada tecla(ainda por terminar os utlimos)
     // As funcos Mum, Mdois... sao para direcionar para clicar nos numeros e botoes correspondentes
-    // No swicth as funcoes estao com a "escolha" meio estraha, mas e para representar, como 11 e Mum, 22 e Mdois...
     Zerar(clientID);
     extApi_sleepMs(3000);
     printf("Eleitor %s\n", nome);
     for (int i = 0; i < 5; i++)
     {
+
         printf("Voto a ser digitado %s\n", votos[i]);
         medio(clientID);
         extApi_sleepMs(2000);
         for (int z = 0; z < strlen(votos[i]); z++) {
             medio(clientID);
-            
+            char juntas[6][82] = {
+        "/base_link_respondable[0]/joint_1",
+        "/base_link_respondable[0]/joint_2",
+        "/base_link_respondable[0]/joint_3",
+        "/base_link_respondable[0]/joint_4",
+        "/base_link_respondable[0]/joint_5",
+        "/base_link_respondable[0]/joint_6",
+        //"/NiryoOne/Joint",
+        //"/NiryoOne/Joint/Link/Joint",
+        //"/NiryoOne/Joint/Link/Joint/Link/Joint",
+        //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint",
+        //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint",
+        //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint"
+            };
+
+            float junta1Pos, junta2Pos, junta3Pos, junta4Pos, junta5Pos, junta6Pos;
+            simxInt Jun1 = 0, Jun2 = 0, Jun3 = 0, Jun4 = 0, Jun5 = 0, Jun6 = 0;
+            simxGetObjectHandle(clientID, juntas[0], &Jun1, (simxInt)simx_opmode_oneshot_wait);
+            simxGetObjectHandle(clientID, juntas[1], &Jun2, (simxInt)simx_opmode_oneshot_wait);
+            simxGetObjectHandle(clientID, juntas[2], &Jun3, (simxInt)simx_opmode_oneshot_wait);
+            simxGetObjectHandle(clientID, juntas[3], &Jun4, (simxInt)simx_opmode_oneshot_wait);
+            simxGetObjectHandle(clientID, juntas[4], &Jun5, (simxInt)simx_opmode_oneshot_wait);
+            simxGetObjectHandle(clientID, juntas[5], &Jun6, (simxInt)simx_opmode_oneshot_wait);
+                
             if (votos[i][z] == '1')
             {
                 Mum(clientID);
@@ -222,93 +247,55 @@ int main(int argc, char* argv[]){
                 extApi_sleepMs(3000);
             }
             medio(clientID);
+            simxGetJointPosition(clientID, Jun1, &junta1Pos, (simxInt)simx_opmode_oneshot_wait);
+            simxGetJointPosition(clientID, Jun2, &junta2Pos, (simxInt)simx_opmode_oneshot_wait);
+            simxGetJointPosition(clientID, Jun3, &junta3Pos, (simxInt)simx_opmode_oneshot_wait);
+            simxGetJointPosition(clientID, Jun4, &junta4Pos, (simxInt)simx_opmode_oneshot_wait);
+            simxGetJointPosition(clientID, Jun5, &junta5Pos, (simxInt)simx_opmode_oneshot_wait);
+            simxGetJointPosition(clientID, Jun6, &junta6Pos, (simxInt)simx_opmode_oneshot_wait);
+            printf("1- %.1f | 2- %.1f | 3- %.1f | 4- %.1f | 5- %.1f | 6- %.1f\n", Rad_Graus(junta1Pos), Rad_Graus(junta2Pos), Rad_Graus(junta3Pos), Rad_Graus(junta4Pos), Rad_Graus(junta5Pos), Rad_Graus(junta6Pos));
         }
         extApi_sleepMs(2000);
         MConfirma(clientID);
         extApi_sleepMs(3000);
+        
     }
-    //int escolha = -1;
-    //float junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
-    //while (scanf("%d", &escolha) != EOF){
-    //    switch (escolha){
-    //    case 1:
-    //        scanf("%f", &junta1);
-    //        MJ(clientID, 1, junta1);
-    //        break;
-    //    case 2:
-    //        scanf("%f", &junta2);
-    //        MJ(clientID, 2, junta2);
-    //        break;
-    //    case 3:
-    //        scanf("%f", &junta3);
-    //        MJ(clientID, 3, junta3);
-    //        break;
-    //    case 4:
-    //        scanf("%f", &junta4);
-    //        MJ(clientID, 4, junta4);
-    //        break;
-    //    case 5:
-    //        scanf("%f", &junta5);
-    //        MJ(clientID, 5, junta5);
-    //        break;
-    //    case 6:
-    //        scanf("%f", &junta1);
-    //        MJ(clientID, 6, junta6);
-    //        break;
-    //    case 0:
-    //        junta1 = 0, junta2 = 0, junta3 = 0, junta4 = 0, junta5 = 0, junta6 = 0;
-    //        Zerar(clientID);
-    //        break;
-    //    case 7:
-    //        medio(clientID);
-    //        break;
-    //    case 11:
-    //        Mum(clientID);
-    //        break;
-    //    case 22:
-    //        Mdois(clientID);
-    //        break;
-    //    case 33:
-    //        Mtres(clientID);
-    //        break;
-    //    case 44:
-    //        Mquatro(clientID);
-    //        break;
-    //    case 55:
-    //        Mcinco(clientID);
-    //        break;
-    //    case 66:
-    //        Mseis(clientID);
-    //        break;
-    //    case 77:
-    //        Msete(clientID);
-    //        break;
-    //    case 88:
-    //        Moito(clientID);
-    //        break;
-    //    case 99:
-    //        Mnove(clientID);
-    //        break;
-    //    case 100:
-    //        Mzero(clientID);
-    //        break;
-    //    case 101:
-    //        MBranco(clientID);
-    //        break;
-    //    case 102:
-    //        MCorrige(clientID);
-    //        break;
-    //    case 103:
-    //        MConfirma(clientID);
-    //        break;
-    //    }
-    //   /* extApi_sleepMs(2000);
-    //    medio(clientID);*/
-    //    // No fim ele printa as angulacos de cada junta para o debug
-    //    printf("1- %.1f | 2- %.1f | 3- %.1f | 4- %.1f | 5- %.1f | 6- %.1f\n\n", junta1, junta2, junta3, junta4, junta5, junta6);
-    //    extApi_sleepMs(200);
+    //char juntas[6][82] = {
+    //    "/base_link_respondable[0]/joint_1",
+    //    "/base_link_respondable[0]/joint_2",
+    //    "/base_link_respondable[0]/joint_3",
+    //    "/base_link_respondable[0]/joint_4",
+    //    "/base_link_respondable[0]/joint_5",
+    //    "/base_link_respondable[0]/joint_6",
+    //    //"/NiryoOne/Joint",
+    //    //"/NiryoOne/Joint/Link/Joint",
+    //    //"/NiryoOne/Joint/Link/Joint/Link/Joint",
+    //    //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint",
+    //    //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint",
+    //    //"/NiryoOne/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint/Link/Joint"
+    //};
+    //
+    //float junta1Pos, junta2Pos, junta3Pos, junta4Pos, junta5Pos, junta6Pos;
+    //simxInt Jun1 = 0, Jun2 = 0, Jun3 = 0, Jun4 = 0, Jun5 = 0, Jun6 = 0;
+    //simxGetObjectHandle(clientID, juntas[0], &Jun1, (simxInt)simx_opmode_oneshot_wait);
+    //simxGetObjectHandle(clientID, juntas[1], &Jun2, (simxInt)simx_opmode_oneshot_wait);
+    //simxGetObjectHandle(clientID, juntas[2], &Jun3, (simxInt)simx_opmode_oneshot_wait);
+    //simxGetObjectHandle(clientID, juntas[3], &Jun4, (simxInt)simx_opmode_oneshot_wait);
+    //simxGetObjectHandle(clientID, juntas[4], &Jun5, (simxInt)simx_opmode_oneshot_wait);
+    //simxGetObjectHandle(clientID, juntas[5], &Jun6, (simxInt)simx_opmode_oneshot_wait);
+    //while (true)
+    //{
+    //        simxGetJointPosition(clientID, Jun1, &junta1Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        simxGetJointPosition(clientID, Jun2, &junta2Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        simxGetJointPosition(clientID, Jun3, &junta3Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        simxGetJointPosition(clientID, Jun4, &junta4Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        simxGetJointPosition(clientID, Jun5, &junta5Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        simxGetJointPosition(clientID, Jun6, &junta6Pos, (simxInt)simx_opmode_oneshot_wait);
+    //        printf("1- %.1f | 2- %.1f | 3- %.1f | 4- %.1f | 5- %.1f | 6- %.1f\n", Rad_Graus(junta1Pos), Rad_Graus(junta2Pos), Rad_Graus(junta3Pos), Rad_Graus(junta4Pos), Rad_Graus(junta5Pos), Rad_Graus(junta6Pos));
+    //        extApi_sleepMs(1000);
+    //        system("clear");
     //}
-    // Fecha a conexao 
+    //// Fecha a conexao 
     simxFinish(clientID);
     
     return(0);
